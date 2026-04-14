@@ -48,34 +48,27 @@ export default function QuotationPage({ zoom = 1, pageRef }) {
           flexDirection: 'column',
         }}
       >
-        {/* ══ HEADER ══ */}
-        <div style={{ position: 'relative', height: 88, flexShrink: 0, overflow: 'hidden', background: '#fff' }}>
-          {/* NNT logo + tagline — left */}
-          <div style={{ position: 'absolute', left: 24, top: 13, zIndex: 2 }}>
-            <img src="/nnt-logo.png" alt="NNT" style={{ height: 50, objectFit: 'contain', display: 'block' }} />
-            <div style={{ fontSize: 10, color: '#D77B49', fontStyle: 'italic', marginTop: 5, letterSpacing: 0.3 }}>
+        {/* ══ HEADER BAND ══ */}
+        <div style={{
+          background: '#ffffff',
+          borderRadius: '0 0 0 56px',
+          padding: '18px 28px 16px 28px',
+          display: 'flex',
+          alignItems: 'flex-end',
+          justifyContent: 'space-between',
+          flexShrink: 0,
+        }}>
+          {/* LEFT: logo + tagline */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <img src="/nnt-logo.png" alt="NNT" style={{ height: 60, width: 'auto', objectFit: 'contain' }} />
+            <div style={{ fontSize: 9, color: '#D77B49', fontStyle: 'italic', marginTop: 5, letterSpacing: 0.4, whiteSpace: 'nowrap' }}>
               A Legacy of Loyalty
             </div>
           </div>
 
-          {/* Teal parallelogram — right */}
-          <div style={{
-            position: 'absolute', right: 0, top: 0,
-            width: '62%', height: '100%',
-            background: '#224E5F',
-            clipPath: 'polygon(9% 0, 100% 0, 100% 100%, 0% 100%)',
-          }} />
-
-          {/* Thin orange line inside teal (accent) */}
-          <div style={{
-            position: 'absolute', bottom: 0, right: 0,
-            width: '62%', height: 5,
-            background: 'linear-gradient(90deg, #D77B49, #e08a5c)',
-          }} />
+          {/* RIGHT: design image */}
+          <img src="/design.png" alt="" style={{ height: 40, width: 'auto', display: 'block' }} />
         </div>
-
-        {/* ══ FULL-WIDTH ORANGE STRIP ══ */}
-        <div style={{ height: 5, background: 'linear-gradient(90deg, #D77B49 0%, #e08a5c 100%)', flexShrink: 0 }} />
 
         {/* ══ BODY ══ */}
         <div style={{ flex: 1, padding: '22px 32px 20px', position: 'relative' }}>
