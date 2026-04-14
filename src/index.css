@@ -262,6 +262,26 @@ body { overscroll-behavior: none; font-family: 'DM Sans', sans-serif; background
 }
 
 /* ── Mobile ── */
+@media (max-width: 767px) {
+  /* Prevent body scroll bounce on iOS */
+  html, body { height: 100%; overflow: hidden; }
+
+  /* Form panel full-width on mobile */
+  #form-panel { width: 100% !important; border-right: none !important; }
+
+  /* Paper shadow lighter on mobile */
+  .paper { box-shadow: 0 4px 20px rgba(34,78,95,0.15); }
+
+  /* Inputs easier to tap */
+  input, textarea, select, button {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Larger tap targets for line item delete buttons */
+  #form-panel button { min-height: 36px; }
+}
+
 @media (max-width: 700px) {
   #rp-panel {
     position: fixed;

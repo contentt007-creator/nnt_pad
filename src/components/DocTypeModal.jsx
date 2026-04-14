@@ -39,15 +39,17 @@ export default function DocTypeModal() {
       background: 'rgba(20,40,50,0.82)',
       backdropFilter: 'blur(8px)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: 24,
+      padding: 16,
+      overflowY: 'auto',
     }}>
       <div style={{
         background: '#fff',
         borderRadius: 20,
-        padding: '40px 36px',
+        padding: 'clamp(24px, 5vw, 40px) clamp(18px, 5vw, 36px)',
         maxWidth: 520,
         width: '100%',
         boxShadow: '0 32px 64px rgba(0,0,0,0.28)',
+        margin: 'auto',
       }}>
         {/* Branding */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>

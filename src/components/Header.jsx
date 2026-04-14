@@ -5,10 +5,21 @@ import { useOneDrive } from '../hooks/useOneDrive'
 import { exportToPDF } from '../lib/exportPDF'
 import MicrosoftAuth from '../auth/MicrosoftAuth'
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
+  return isMobile
+}
+
 export default function Header() {
   const showToast     = useEditorStore(s => s.showToast)
   const resetDocument = useDocumentStore(s => s.resetDocument)
   const docType       = useDocumentStore(s => s.docType)
+  const isMobile      = useIsMobile()
 
   const [showODMenu, setShowODMenu] = useState(false)
   const [odFiles, setOdFiles]       = useState([])
@@ -16,7 +27,6 @@ export default function Header() {
 
   const { save: odSave, list: odList, load: odLoad, isAuthenticated: odAuth } = useOneDrive()
 
-  // Close menu on outside click
   useEffect(() => {
     if (!showODMenu) return
     const handler = (e) => {
@@ -51,71 +61,94 @@ export default function Header() {
     }
   }
 
-  const btnBase = {
-    display: 'flex', alignItems: 'center', gap: 6,
-    padding: '0 12px', height: 32, borderRadius: 7,
-    fontSize: 11, fontWeight: 500,
-    cursor: 'pointer', transition: 'all 0.12s',
-    fontFamily: "'DM Sans', sans-serif",
-  }
+  const iconBtn = (onClick, children, title, extraStyle = {}) => (
+    <button
+      onClick={onClick}
+      title={title}
+      style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
+        padding: isMobile ? '0 10px' : '0 12px',
+        height: 32, borderRadius: 7,
+        background: 'rgba(255,255,255,0.09)',
+        border: '1px solid rgba(255,255,255,0.18)',
+        color: 'rgba(255,255,255,0.75)',
+        fontSize: 11, fontWeight: 500,
+        cursor: 'pointer', transition: 'all 0.12s',
+        fontFamily: "'DM Sans', sans-serif",
+        ...extraStyle,
+      }}
+      onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.15)' }}
+      onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.75)'; e.currentTarget.style.background = extraStyle.background || 'rgba(255,255,255,0.09)' }}
+    >
+      {children}
+    </button>
+  )
 
   return (
     <header
-      className="flex items-center flex-shrink-0"
       style={{
         background: 'linear-gradient(135deg, #224E5F 0%, #1a3d4d 100%)',
         borderBottom: '2px solid #D77B49',
         boxShadow: '0 2px 12px rgba(34,78,95,0.25)',
         height: 52,
+        display: 'flex',
+        alignItems: 'center',
+        flexShrink: 0,
         overflow: 'visible',
+        position: 'relative',
+        zIndex: 100,
       }}
     >
-      {/* NNT Logo */}
+      {/* Logo */}
       <div
-        className="flex items-center gap-2.5 px-4 h-full flex-shrink-0"
-        style={{ borderRight: '1px solid rgba(255,255,255,0.1)' }}
+        style={{
+          display: 'flex', alignItems: 'center', gap: isMobile ? 8 : 10,
+          padding: isMobile ? '0 12px' : '0 16px',
+          height: '100%', flexShrink: 0,
+          borderRight: '1px solid rgba(255,255,255,0.1)',
+        }}
       >
         <img
           src="/nnt-logo.png"
           alt="NNT"
-          style={{ height: 28, filter: 'brightness(0) invert(1)', objectFit: 'contain' }}
+          style={{ height: 26, filter: 'brightness(0) invert(1)', objectFit: 'contain' }}
         />
-        <div>
-          <div
-            className="font-display font-bold text-white leading-none"
-            style={{ fontSize: 16, letterSpacing: 2 }}
-          >
-            NNT
+        {!isMobile && (
+          <div>
+            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 16, fontWeight: 700, color: '#fff', letterSpacing: 2, lineHeight: 1 }}>NNT</div>
+            <div style={{ fontSize: 8, letterSpacing: 1.5, color: '#D77B49', textTransform: 'uppercase', marginTop: 2 }}>Editor</div>
           </div>
-          <div
-            className="uppercase leading-none mt-0.5"
-            style={{ fontSize: 8, letterSpacing: 1.5, color: '#D77B49' }}
-          >
-            Editor
-          </div>
+        )}
+      </div>
+
+      {/* Doc type badge — desktop only */}
+      {!isMobile && (
+        <div style={{ display: 'flex', alignItems: 'center', padding: '0 14px', height: '100%', flexShrink: 0, borderRight: '1px solid rgba(255,255,255,0.08)' }}>
+          <span style={{
+            fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
+            letterSpacing: 1.5, color: 'rgba(255,255,255,0.5)',
+            background: 'rgba(255,255,255,0.07)', padding: '3px 10px', borderRadius: 20,
+          }}>
+            {DOC_CONFIG[docType]?.title || 'Document'}
+          </span>
         </div>
-      </div>
+      )}
 
-      {/* Doc type badge */}
-      <div
-        className="flex items-center px-4 h-full flex-shrink-0"
-        style={{ borderRight: '1px solid rgba(255,255,255,0.08)' }}
-      >
-        <span style={{
-          fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
-          letterSpacing: 1.5, color: 'rgba(255,255,255,0.5)',
-          background: 'rgba(255,255,255,0.07)',
-          padding: '3px 10px', borderRadius: 20,
-        }}>
-          {DOC_CONFIG[docType]?.title || 'Document'}
-        </span>
-      </div>
+      {/* Doc type badge — mobile (compact) */}
+      {isMobile && (
+        <div style={{ display: 'flex', alignItems: 'center', padding: '0 10px', height: '100%', flexShrink: 0 }}>
+          <span style={{ fontSize: 10, fontWeight: 700, color: '#D77B49', letterSpacing: 1, textTransform: 'uppercase' }}>
+            {DOC_CONFIG[docType]?.title || 'DOC'}
+          </span>
+        </div>
+      )}
 
-      {/* New button */}
+      {/* New */}
       <button
         onClick={handleNew}
-        className="flex items-center h-full px-4 flex-shrink-0"
         style={{
+          display: 'flex', alignItems: 'center', height: '100%',
+          padding: isMobile ? '0 10px' : '0 16px',
           background: 'transparent', border: 'none',
           borderRight: '1px solid rgba(255,255,255,0.08)',
           color: 'rgba(255,255,255,0.5)',
@@ -126,55 +159,35 @@ export default function Header() {
         onMouseEnter={e => e.currentTarget.style.color = '#fff'}
         onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}
       >
-        + New
+        {isMobile ? '＋' : '+ New'}
       </button>
 
-      <div className="flex-1" />
+      <div style={{ flex: 1 }} />
 
       {/* Action buttons */}
-      <div className="flex items-center gap-2 px-3 flex-shrink-0">
+      <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 5 : 8, padding: isMobile ? '0 8px' : '0 12px', flexShrink: 0 }}>
 
         {/* OneDrive Save */}
-        {odAuth && (
-          <button
-            onClick={odSave}
-            style={{
-              ...btnBase,
-              background: 'rgba(0,120,212,0.18)',
-              border: '1px solid rgba(0,120,212,0.45)',
-              color: 'rgba(255,255,255,0.85)',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,120,212,0.35)'; e.currentTarget.style.color = '#fff' }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,120,212,0.18)'; e.currentTarget.style.color = 'rgba(255,255,255,0.85)' }}
-            title="Save to OneDrive"
-          >
+        {odAuth && iconBtn(odSave, (
+          <>
             <svg viewBox="0 0 24 24" style={{ width: 13, height: 13 }} fill="currentColor">
               <path d="M10.2 6.4a5.6 5.6 0 0 1 9.7 3.1A4 4 0 0 1 22 13.2a4 4 0 0 1-4 3.8H6a4 4 0 0 1-.5-8 5.6 5.6 0 0 1 4.7-2.6z"/>
             </svg>
-            Save
-          </button>
-        )}
+            {!isMobile && 'Save'}
+          </>
+        ), 'Save to OneDrive', { background: 'rgba(0,120,212,0.18)', border: '1px solid rgba(0,120,212,0.45)' })}
 
         {/* OneDrive Open */}
         {odAuth && (
           <div style={{ position: 'relative' }} ref={menuRef}>
-            <button
-              onClick={handleOpenOD}
-              style={{
-                ...btnBase,
-                background: 'rgba(0,120,212,0.18)',
-                border: '1px solid rgba(0,120,212,0.45)',
-                color: 'rgba(255,255,255,0.85)',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,120,212,0.35)'; e.currentTarget.style.color = '#fff' }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,120,212,0.18)'; e.currentTarget.style.color = 'rgba(255,255,255,0.85)' }}
-              title="Open from OneDrive"
-            >
-              <svg viewBox="0 0 24 24" style={{ width: 13, height: 13 }} fill="currentColor">
-                <path d="M10.2 6.4a5.6 5.6 0 0 1 9.7 3.1A4 4 0 0 1 22 13.2a4 4 0 0 1-4 3.8H6a4 4 0 0 1-.5-8 5.6 5.6 0 0 1 4.7-2.6z"/>
-              </svg>
-              Open
-            </button>
+            {iconBtn(handleOpenOD, (
+              <>
+                <svg viewBox="0 0 24 24" style={{ width: 13, height: 13 }} fill="currentColor">
+                  <path d="M10.2 6.4a5.6 5.6 0 0 1 9.7 3.1A4 4 0 0 1 22 13.2a4 4 0 0 1-4 3.8H6a4 4 0 0 1-.5-8 5.6 5.6 0 0 1 4.7-2.6z"/>
+                </svg>
+                {!isMobile && 'Open'}
+              </>
+            ), 'Open from OneDrive', { background: 'rgba(0,120,212,0.18)', border: '1px solid rgba(0,120,212,0.45)' })}
 
             {showODMenu && (
               <div style={{
@@ -218,25 +231,29 @@ export default function Header() {
           </div>
         )}
 
-        {/* PDF Export */}
+        {/* PDF */}
         <button
           onClick={handlePDF}
           style={{
-            ...btnBase,
-            padding: '0 14px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
+            padding: isMobile ? '0 12px' : '0 14px',
+            height: 32, borderRadius: 7,
             background: 'linear-gradient(135deg, #c0392b, #a93226)',
-            border: 'none', color: '#fff', fontWeight: 600,
+            border: 'none', color: '#fff',
+            fontSize: 11, fontWeight: 600,
+            cursor: 'pointer', transition: 'opacity 0.12s',
             boxShadow: '0 2px 8px rgba(192,57,43,0.35)',
+            fontFamily: "'DM Sans', sans-serif",
           }}
           onMouseEnter={e => e.currentTarget.style.opacity = '0.88'}
           onMouseLeave={e => e.currentTarget.style.opacity = '1'}
         >
-          📄 PDF
+          📄{!isMobile && ' PDF'}
         </button>
       </div>
 
-      {/* Microsoft / OneDrive Auth */}
-      <MicrosoftAuth />
+      {/* Microsoft Auth */}
+      <MicrosoftAuth isMobile={isMobile} />
     </header>
   )
 }

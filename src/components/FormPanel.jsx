@@ -48,7 +48,7 @@ function Field({ label, children, half }) {
   )
 }
 
-export default function FormPanel() {
+export default function FormPanel({ isMobile = false }) {
   const docType          = useDocumentStore(s => s.docType)
   const clientInfo       = useDocumentStore(s => s.clientInfo)
   const metadata         = useDocumentStore(s => s.metadata)
@@ -75,12 +75,12 @@ export default function FormPanel() {
     <div
       id="form-panel"
       style={{
-        width: 340,
+        width: isMobile ? '100%' : 340,
         flexShrink: 0,
         overflowY: 'auto',
         background: 'linear-gradient(180deg, #f5f2ed 0%, #f0ede7 100%)',
-        borderRight: '1px solid rgba(34,78,95,0.12)',
-        padding: '12px 16px 24px',
+        borderRight: isMobile ? 'none' : '1px solid rgba(34,78,95,0.12)',
+        padding: isMobile ? '14px 16px 32px' : '12px 16px 24px',
         display: 'flex',
         flexDirection: 'column',
       }}
