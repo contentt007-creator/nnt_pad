@@ -197,7 +197,7 @@ export default function QuotationPage({ zoom = 1, pageRef }) {
             <div>
               <div style={{ fontWeight: 700, fontSize: 12, color: '#1a2744', marginBottom: 3 }}>Terms and Conditions:</div>
               <div style={{ fontSize: 11, color: '#555', lineHeight: 1.65, whiteSpace: 'pre-line', minHeight: 18 }}>
-                {termsConditions}
+                {termsConditions || '50% has to be paid in advance.'}
               </div>
             </div>
           </div>
