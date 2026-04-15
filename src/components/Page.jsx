@@ -20,8 +20,9 @@ export default function Page({ zoom = 1, pageRef }) {
   const lineItems  = useDocumentStore(s => s.lineItems)
   const taxRate    = useDocumentStore(s => s.taxRate)
   const totals     = useDocumentStore(s => s.totals)
-  const notes       = useDocumentStore(s => s.notes)
-  const dueBalance  = useDocumentStore(s => s.dueBalance)
+  const notes          = useDocumentStore(s => s.notes)
+  const dueBalance     = useDocumentStore(s => s.dueBalance)
+  const advanceAmount  = useDocumentStore(s => s.advanceAmount)
 
   const cfg     = DOC_CONFIG[docType] || DOC_CONFIG.invoice
   const padRows = Math.max(0, EMPTY_ROWS - lineItems.length)
@@ -190,16 +191,38 @@ export default function Page({ zoom = 1, pageRef }) {
                   <span style={{ fontWeight: 600, color: '#1a2744' }}>{CURRENCY} {fmtNum(totals.tax)}</span>
                 </div>
               )}
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', marginTop: 4, background: '#224E5F', borderRadius: dueBalance ? '7px 7px 0 0' : 7, fontSize: 13, fontWeight: 700 }}>
-                <span style={{ color: 'rgba(255,255,255,0.75)' }}>Grand Total</span>
-                <span style={{ color: '#fff' }}>{CURRENCY} {fmtNum(totals.grandTotal)}</span>
-              </div>
-              {dueBalance && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#D77B49', borderRadius: '0 0 7px 7px', fontSize: 13, fontWeight: 700 }}>
-                  <span style={{ color: 'rgba(255,255,255,0.85)' }}>Due Balance</span>
-                  <span style={{ color: '#fff' }}>{CURRENCY} {fmtNum(dueBalance)}</span>
-                </div>
-              )}
+              {(() => {
+                const hasAdvance = parseFloat(advanceAmount) > 0
+                const hasDue     = !!dueBalance
+                const hasBelow   = hasAdvance || hasDue
+                const restAmount = parseFloat(totals.grandTotal) - (parseFloat(advanceAmount) || 0)
+                return (
+                  <>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', marginTop: 4, background: '#224E5F', borderRadius: hasBelow ? '7px 7px 0 0' : 7, fontSize: 13, fontWeight: 700 }}>
+                      <span style={{ color: 'rgba(255,255,255,0.75)' }}>Grand Total</span>
+                      <span style={{ color: '#fff' }}>{CURRENCY} {fmtNum(totals.grandTotal)}</span>
+                    </div>
+                    {hasDue && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#D77B49', borderRadius: hasAdvance ? 0 : '0 0 7px 7px', fontSize: 13, fontWeight: 700 }}>
+                        <span style={{ color: 'rgba(255,255,255,0.85)' }}>Due Balance</span>
+                        <span style={{ color: '#fff' }}>{CURRENCY} {fmtNum(dueBalance)}</span>
+                      </div>
+                    )}
+                    {hasAdvance && (
+                      <>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 12px', background: '#f0f7f4', borderTop: '1px solid #d4ede6', fontSize: 12, fontWeight: 600 }}>
+                          <span style={{ color: '#2e7d62' }}>Advance Amount</span>
+                          <span style={{ color: '#2e7d62' }}>{CURRENCY} {fmtNum(advanceAmount)}</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#1a7a50', borderRadius: '0 0 7px 7px', fontSize: 13, fontWeight: 700 }}>
+                          <span style={{ color: 'rgba(255,255,255,0.85)' }}>Rest Amount</span>
+                          <span style={{ color: '#fff' }}>{CURRENCY} {fmtNum(restAmount)}</span>
+                        </div>
+                      </>
+                    )}
+                  </>
+                )
+              })()}
             </div>
           </div>
 

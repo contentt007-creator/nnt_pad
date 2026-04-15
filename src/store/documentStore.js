@@ -65,6 +65,7 @@ export const useDocumentStore = create((set, get) => ({
   notes: '',
   termsConditions: '',
   dueBalance: '',
+  advanceAmount: '',
 
   // ── Actions ──
   setDocType: (docType) => set({ docType, showDocTypeModal: false }),
@@ -79,6 +80,7 @@ export const useDocumentStore = create((set, get) => ({
   setNotes: (notes) => set({ notes }),
   setTermsConditions: (termsConditions) => set({ termsConditions }),
   setDueBalance: (dueBalance) => set({ dueBalance }),
+  setAdvanceAmount: (advanceAmount) => set({ advanceAmount }),
 
   setTaxRate: (taxRate) =>
     set(s => ({ taxRate, totals: calcTotals(s.lineItems, taxRate) })),
@@ -126,6 +128,7 @@ export const useDocumentStore = create((set, get) => ({
       notes:           data.notes           || '',
       termsConditions: data.termsConditions || '',
       dueBalance:      data.dueBalance      || '',
+      advanceAmount:   data.advanceAmount   || '',
     })
   },
 
@@ -141,6 +144,7 @@ export const useDocumentStore = create((set, get) => ({
       notes:           s.notes,
       termsConditions: s.termsConditions,
       dueBalance:      s.dueBalance,
+      advanceAmount:   s.advanceAmount,
     }
   },
 
@@ -157,6 +161,7 @@ export const useDocumentStore = create((set, get) => ({
       notes:            '',
       termsConditions:  '',
       dueBalance:       '',
+      advanceAmount:    '',
     })
   },
 }))

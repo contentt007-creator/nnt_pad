@@ -68,6 +68,8 @@ export default function FormPanel({ isMobile = false }) {
   const setTermsConditions  = useDocumentStore(s => s.setTermsConditions)
   const dueBalance          = useDocumentStore(s => s.dueBalance)
   const setDueBalance       = useDocumentStore(s => s.setDueBalance)
+  const advanceAmount       = useDocumentStore(s => s.advanceAmount)
+  const setAdvanceAmount    = useDocumentStore(s => s.setAdvanceAmount)
 
   const cfg = DOC_CONFIG[docType] || DOC_CONFIG.invoice
 
@@ -363,6 +365,20 @@ export default function FormPanel({ isMobile = false }) {
           onFocus={focus} onBlur={blur}
         />
       </Field>
+
+      {/* Advance Amount — invoice/bill/chalan only */}
+      {docType !== 'quotation' && (
+        <Field label="Advance Amount (৳)">
+          <input
+            style={inp}
+            type="number" min="0" step="0.01"
+            value={advanceAmount}
+            onChange={e => setAdvanceAmount(e.target.value)}
+            placeholder="0.00 — leave blank to hide"
+            onFocus={focus} onBlur={blur}
+          />
+        </Field>
+      )}
 
       {/* ── Notes ── */}
       <SectionHeader title={docType === 'quotation' ? 'Note' : 'Notes / Terms'} />
