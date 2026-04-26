@@ -54,12 +54,14 @@ export default function FormPanel({ isMobile = false }) {
   const metadata         = useDocumentStore(s => s.metadata)
   const lineItems        = useDocumentStore(s => s.lineItems)
   const taxRate          = useDocumentStore(s => s.taxRate)
+  const vatEnabled       = useDocumentStore(s => s.vatEnabled)
   const totals           = useDocumentStore(s => s.totals)
   const notes            = useDocumentStore(s => s.notes)
   const setDocType       = useDocumentStore(s => s.setDocType)
   const setClientInfo    = useDocumentStore(s => s.setClientInfo)
   const setMetadata      = useDocumentStore(s => s.setMetadata)
   const setTaxRate       = useDocumentStore(s => s.setTaxRate)
+  const setVatEnabled    = useDocumentStore(s => s.setVatEnabled)
   const addLineItem      = useDocumentStore(s => s.addLineItem)
   const removeLineItem   = useDocumentStore(s => s.removeLineItem)
   const updateLineItem   = useDocumentStore(s => s.updateLineItem)
@@ -317,16 +319,52 @@ export default function FormPanel({ isMobile = false }) {
 
       {/* ── Tax & Totals ── */}
       <SectionHeader title="Tax & Totals" />
-      <Field label="Tax Rate (%)">
-        <input
-          style={{ ...inp, width: 110 }}
-          type="number" min="0" max="100" step="0.5"
-          value={taxRate}
-          onChange={e => setTaxRate(e.target.value)}
-          placeholder="0"
-          onFocus={focus} onBlur={blur}
-        />
-      </Field>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+        <Field label="Tax Rate (%)" half>
+          <input
+            style={{ ...inp }}
+            type="number" min="0" max="100" step="0.5"
+            value={taxRate}
+            onChange={e => setTaxRate(e.target.value)}
+            placeholder="0"
+            onFocus={focus} onBlur={blur}
+          />
+        </Field>
+
+        {/* VAT toggle */}
+        <div style={{ marginBottom: 9 }}>
+          <label style={{ fontSize: 10, fontWeight: 600, color: '#777', display: 'block', marginBottom: 3, textTransform: 'uppercase', letterSpacing: 0.8 }}>
+            VAT
+          </label>
+          <button
+            onClick={() => setVatEnabled(!vatEnabled)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 7,
+              padding: '6px 12px', borderRadius: 5, cursor: 'pointer',
+              fontSize: 12, fontWeight: 600,
+              border: vatEnabled ? 'none' : '1px solid #e0dcd5',
+              background: vatEnabled ? 'linear-gradient(135deg, #224E5F, #1a3d4d)' : '#fff',
+              color: vatEnabled ? '#fff' : '#999',
+              transition: 'all 0.15s',
+              fontFamily: "'DM Sans', sans-serif",
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <span style={{
+              width: 28, height: 16, borderRadius: 8, display: 'inline-flex', alignItems: 'center',
+              background: vatEnabled ? '#D77B49' : '#ddd',
+              padding: '0 2px', transition: 'background 0.15s', flexShrink: 0,
+            }}>
+              <span style={{
+                width: 12, height: 12, borderRadius: '50%', background: '#fff',
+                transform: vatEnabled ? 'translateX(12px)' : 'translateX(0)',
+                transition: 'transform 0.15s', display: 'block',
+              }} />
+            </span>
+            10%
+          </button>
+        </div>
+      </div>
 
       {/* Totals summary box */}
       <div style={{
@@ -342,6 +380,12 @@ export default function FormPanel({ isMobile = false }) {
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#666', marginBottom: 5 }}>
             <span>Tax ({taxRate}%)</span>
             <span style={{ fontWeight: 500 }}>{CURRENCY} {totals.tax.toFixed(2)}</span>
+          </div>
+        )}
+        {vatEnabled && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#D77B49', marginBottom: 5 }}>
+            <span style={{ fontWeight: 600 }}>VAT (10%)</span>
+            <span style={{ fontWeight: 600 }}>{CURRENCY} {(totals.vat || 0).toFixed(2)}</span>
           </div>
         )}
         <div style={{

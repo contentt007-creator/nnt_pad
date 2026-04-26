@@ -25,6 +25,7 @@ export default function QuotationPage({ zoom = 1, pageRef }) {
   const metadata        = useDocumentStore(s => s.metadata)
   const lineItems       = useDocumentStore(s => s.lineItems)
   const totals          = useDocumentStore(s => s.totals)
+  const vatEnabled      = useDocumentStore(s => s.vatEnabled)
   const notes           = useDocumentStore(s => s.notes)
   const termsConditions = useDocumentStore(s => s.termsConditions)
 
@@ -173,6 +174,18 @@ export default function QuotationPage({ zoom = 1, pageRef }) {
                   <td style={cell()}></td>
                 </tr>
               ))}
+
+              {/* VAT row — only when enabled */}
+              {vatEnabled && (
+                <tr>
+                  <td colSpan={4} style={{ ...cell({ textAlign: 'right', fontWeight: 600, fontSize: 11, color: '#D77B49' }) }}>
+                    VAT (10%)
+                  </td>
+                  <td style={{ ...cell({ textAlign: 'right', fontWeight: 600, fontSize: 11, color: '#D77B49' }) }}>
+                    {CURRENCY} {fmtNum(totals.vat)}
+                  </td>
+                </tr>
+              )}
 
               {/* Total amount row */}
               <tr>

@@ -23,6 +23,7 @@ export default function Page({ zoom = 1, pageRef }) {
   const notes          = useDocumentStore(s => s.notes)
   const dueBalance     = useDocumentStore(s => s.dueBalance)
   const advanceAmount  = useDocumentStore(s => s.advanceAmount)
+  const vatEnabled     = useDocumentStore(s => s.vatEnabled)
 
   const cfg     = DOC_CONFIG[docType] || DOC_CONFIG.invoice
   const padRows = Math.max(0, EMPTY_ROWS - lineItems.length)
@@ -189,6 +190,12 @@ export default function Page({ zoom = 1, pageRef }) {
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #ede9e0', fontSize: 12 }}>
                   <span style={{ color: '#777' }}>Tax ({taxRate}%)</span>
                   <span style={{ fontWeight: 600, color: '#1a2744' }}>{CURRENCY} {fmtNum(totals.tax)}</span>
+                </div>
+              )}
+              {vatEnabled && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #ede9e0', fontSize: 12 }}>
+                  <span style={{ color: '#D77B49', fontWeight: 600 }}>VAT (10%)</span>
+                  <span style={{ fontWeight: 600, color: '#D77B49' }}>{CURRENCY} {fmtNum(totals.vat)}</span>
                 </div>
               )}
               {(() => {
