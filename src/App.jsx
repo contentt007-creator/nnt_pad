@@ -23,6 +23,24 @@ function LoginGate() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // On page load, check for OAuth redirect token in URL hash/params
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const accessToken = params.get('access_token')
+    if (accessToken) {
+      setLoading(true)
+      fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+        .then(r => r.json())
+        .then(data => {
+          setUser({ email: data.email, name: data.name, picture: data.picture })
+          window.history.replaceState({}, '', window.location.pathname)
+        })
+        .catch(() => setLoading(false))
+    }
+  }, [setUser])
+
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       setLoading(true)
@@ -34,11 +52,13 @@ function LoginGate() {
         setUser({ email: data.email, name: data.name, picture: data.picture })
       } catch (e) {
         setError('Failed to fetch profile. Please try again.')
-      } finally {
         setLoading(false)
       }
     },
     onError: () => { setError('Google sign-in failed. Please try again.'); setLoading(false) },
+    // redirect flow works on all mobile browsers (no popup blocker issues)
+    ux_mode: 'redirect',
+    redirect_uri: window.location.origin,
   })
 
   return (
@@ -76,7 +96,7 @@ function LoginGate() {
         </div>
 
         <button
-          onClick={() => { setError(''); setLoading(true); login() }}
+          onClick={() => { setError(''); login() }}
           disabled={loading}
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,

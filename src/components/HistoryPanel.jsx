@@ -17,9 +17,8 @@ function fmtTime(ts) {
 }
 
 export default function HistoryPanel({ onClose }) {
-  const history      = useAuthStore(s => s.history)
-  const clearHistory = useAuthStore(s => s.clearHistory)
-  const panelRef     = useRef(null)
+  const history  = useAuthStore(s => s.history)
+  const panelRef = useRef(null)
 
   // Close on outside click
   useEffect(() => {
@@ -63,18 +62,6 @@ export default function HistoryPanel({ onClose }) {
           </div>
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          {history.length > 0 && (
-            <button
-              onClick={() => { if (window.confirm('Clear all history?')) clearHistory() }}
-              style={{
-                fontSize: 10, color: '#e74c3c', background: 'rgba(231,76,60,0.08)',
-                border: 'none', borderRadius: 5, padding: '4px 9px',
-                cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-              }}
-            >
-              Clear all
-            </button>
-          )}
           <button
             onClick={onClose}
             style={{

@@ -15,10 +15,8 @@ export const useAuthStore = create(
           history: [
             { ...entry, id: Date.now(), timestamp: new Date().toISOString() },
             ...s.history,
-          ].slice(0, 200), // keep last 200
+          ],
         })),
-
-      clearHistory: () => set({ history: [] }),
     }),
     { name: 'nnt-history' }
   )
