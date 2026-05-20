@@ -235,13 +235,39 @@ export default function Page({ zoom = 1, pageRef }) {
 
           {/* ── Notes ── */}
           {notes && (
-            <div style={{ background: '#f7f4ef', borderRadius: 8, padding: '12px 16px', border: '1px solid #e8e4dc', fontSize: 11, color: '#666', lineHeight: 1.6 }}>
+            <div style={{ background: '#f7f4ef', borderRadius: 8, padding: '12px 16px', border: '1px solid #e8e4dc', fontSize: 11, color: '#666', lineHeight: 1.6, marginBottom: 20 }}>
               <div style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.5, color: '#224E5F', marginBottom: 5 }}>
                 Notes / Terms
               </div>
               <div style={{ whiteSpace: 'pre-line' }}>{notes}</div>
             </div>
           )}
+
+          {/* ── Signature Row ── */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 'auto', paddingTop: 28 }}>
+            {/* Authorised Signature */}
+            <div style={{ textAlign: 'center', flex: '0 0 auto', width: 180 }}>
+              <div style={{ borderTop: '1.5px solid #1a2744', paddingTop: 6 }}>
+                <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.2, color: '#1a2744' }}>
+                  Authorised Signature
+                </div>
+                <div style={{ fontSize: 8, color: '#aaa', marginTop: 2, letterSpacing: 0.4 }}>NNT Business Solutions</div>
+              </div>
+            </div>
+
+            {/* Client Signature */}
+            <div style={{ textAlign: 'center', flex: '0 0 auto', width: 180 }}>
+              <div style={{ height: 36 }} /> {/* space for signature */}
+              <div style={{ borderTop: '1.5px solid #D77B49', paddingTop: 6 }}>
+                <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.2, color: '#D77B49' }}>
+                  Client Signature
+                </div>
+                <div style={{ fontSize: 8, color: '#aaa', marginTop: 2, letterSpacing: 0.4 }}>
+                  {clientInfo.name || 'Client Name'}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* ══ FOOTER BAND ══ */}
