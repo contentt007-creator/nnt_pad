@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useGoogleLogin } from '@react-oauth/google'
 import { useHistory } from './hooks/useHistory'
 import { useAuthStore } from './store/authStore'
 import Header from './components/Header'
@@ -7,6 +6,8 @@ import FormPanel from './components/FormPanel'
 import DocumentPreview from './components/DocumentPreview'
 import DocTypeModal from './components/DocTypeModal'
 import Toast from './components/Toast'
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
@@ -19,101 +20,97 @@ function useIsMobile() {
 }
 
 function LoginGate() {
-  const setUser = useAuthStore(s => s.setUser)
+  const setUser  = useAuthStore(s => s.setUser)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [error,   setError]   = useState('')
 
-  // On page load, check for OAuth redirect token in URL hash/params
+  // After Google redirects back, the access_token is in the URL hash
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const accessToken = params.get('access_token')
-    if (accessToken) {
-      setLoading(true)
-      fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      })
-        .then(r => r.json())
-        .then(data => {
-          setUser({ email: data.email, name: data.name, picture: data.picture })
-          window.history.replaceState({}, '', window.location.pathname)
-        })
-        .catch(() => setLoading(false))
-    }
+    const hash = window.location.hash.slice(1)
+    if (!hash) return
+    const params = new URLSearchParams(hash)
+    const token  = params.get('access_token')
+    if (!token) return
+
+    setLoading(true)
+    // Clean up the URL immediately so it looks tidy
+    window.history.replaceState({}, '', window.location.pathname)
+
+    fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(r => r.json())
+      .then(data => setUser({ email: data.email, name: data.name, picture: data.picture }))
+      .catch(() => { setError('Sign-in failed. Please try again.'); setLoading(false) })
   }, [setUser])
 
-  const login = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      setLoading(true)
-      try {
-        const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-        })
-        const data = await res.json()
-        setUser({ email: data.email, name: data.name, picture: data.picture })
-      } catch (e) {
-        setError('Failed to fetch profile. Please try again.')
-        setLoading(false)
-      }
-    },
-    onError: () => { setError('Google sign-in failed. Please try again.'); setLoading(false) },
-    // redirect flow works on all mobile browsers (no popup blocker issues)
-    ux_mode: 'redirect',
-    redirect_uri: window.location.origin,
-  })
+  const signIn = () => {
+    const params = new URLSearchParams({
+      client_id:    GOOGLE_CLIENT_ID,
+      redirect_uri: window.location.origin,
+      response_type: 'token',
+      scope: 'openid email profile',
+    })
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params}`
+  }
 
   return (
     <div style={{
-      height: '100dvh', display: 'flex', flexDirection: 'column',
+      minHeight: '100dvh',
+      display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',
       background: 'linear-gradient(135deg, #1a3d4d 0%, #224E5F 60%, #2d6478 100%)',
       fontFamily: "'DM Sans', sans-serif",
+      padding: '24px 16px',
+      boxSizing: 'border-box',
     }}>
       {/* Card */}
       <div style={{
         background: '#fff', borderRadius: 20,
         boxShadow: '0 24px 80px rgba(0,0,0,0.25)',
-        padding: '48px 44px 40px',
+        padding: '40px 32px 36px',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
-        width: 'min(380px, 90vw)',
+        width: '100%', maxWidth: 360,
+        boxSizing: 'border-box',
       }}>
         {/* Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
           <img src="/nnt-logo.png" alt="NNT"
-            style={{ height: 38, objectFit: 'contain' }} />
+            style={{ height: 36, objectFit: 'contain' }} />
           <div>
-            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, color: '#224E5F', letterSpacing: 2, lineHeight: 1 }}>NNT</div>
+            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, color: '#224E5F', letterSpacing: 2, lineHeight: 1 }}>NNT</div>
             <div style={{ fontSize: 9, letterSpacing: 2, color: '#D77B49', textTransform: 'uppercase', marginTop: 2 }}>Editor</div>
           </div>
         </div>
 
         <div style={{ width: 40, height: 2, background: '#D77B49', borderRadius: 2, margin: '14px 0 22px' }} />
 
-        <div style={{ fontSize: 18, fontWeight: 700, color: '#1a2744', marginBottom: 6, textAlign: 'center' }}>
+        <div style={{ fontSize: 17, fontWeight: 700, color: '#1a2744', marginBottom: 6, textAlign: 'center' }}>
           Welcome back
         </div>
-        <div style={{ fontSize: 12, color: '#999', marginBottom: 32, textAlign: 'center', lineHeight: 1.5 }}>
+        <div style={{ fontSize: 12, color: '#999', marginBottom: 28, textAlign: 'center', lineHeight: 1.6 }}>
           Sign in with your Google account<br />to access NNT Editor
         </div>
 
         <button
-          onClick={() => { setError(''); login() }}
+          onClick={signIn}
           disabled={loading}
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
             width: '100%', padding: '13px 20px',
             background: loading ? '#f5f5f5' : '#fff',
-            border: '1.5px solid #e0e0e0',
-            borderRadius: 10, cursor: loading ? 'not-allowed' : 'pointer',
-            fontSize: 13, fontWeight: 600, color: '#333',
+            border: '1.5px solid #ddd',
+            borderRadius: 10,
+            cursor: loading ? 'default' : 'pointer',
+            fontSize: 13, fontWeight: 600, color: loading ? '#aaa' : '#333',
             boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-            transition: 'all 0.15s',
             fontFamily: "'DM Sans', sans-serif",
+            transition: 'box-shadow 0.15s',
+            WebkitTapHighlightColor: 'transparent',
           }}
-          onMouseEnter={e => { if (!loading) e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.14)' }}
-          onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)' }}
         >
           {loading ? (
-            <span style={{ fontSize: 13, color: '#999' }}>Signing in…</span>
+            <span>Signing in…</span>
           ) : (
             <>
               <svg viewBox="0 0 24 24" style={{ width: 18, height: 18, flexShrink: 0 }}>
@@ -131,7 +128,7 @@ function LoginGate() {
           <div style={{ marginTop: 14, fontSize: 11, color: '#e74c3c', textAlign: 'center' }}>{error}</div>
         )}
 
-        <div style={{ marginTop: 28, fontSize: 10, color: '#ccc', textAlign: 'center' }}>
+        <div style={{ marginTop: 24, fontSize: 10, color: '#ccc', textAlign: 'center' }}>
           NNT Business Solutions · Authorised access only
         </div>
       </div>
@@ -181,6 +178,7 @@ export default function App() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: 6,
+                  WebkitTapHighlightColor: 'transparent',
                 }}
               >
                 <span style={{ fontSize: 15 }}>{icon}</span>
