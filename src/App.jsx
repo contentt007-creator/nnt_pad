@@ -136,13 +136,128 @@ function LoginGate() {
   )
 }
 
+const ACCESS_CODE = '33113'
+
+function CodeGate({ onVerified }) {
+  const [input,    setInput]    = useState('')
+  const [error,    setError]    = useState('')
+  const [shaking,  setShaking]  = useState(false)
+  const user = useAuthStore(s => s.user)
+
+  const verify = () => {
+    if (input.trim() === ACCESS_CODE) {
+      onVerified()
+    } else {
+      setError('Incorrect code. Try again.')
+      setShaking(true)
+      setInput('')
+      setTimeout(() => setShaking(false), 500)
+    }
+  }
+
+  return (
+    <div style={{
+      minHeight: '100dvh',
+      display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center',
+      background: 'linear-gradient(135deg, #1a3d4d 0%, #224E5F 60%, #2d6478 100%)',
+      fontFamily: "'DM Sans', sans-serif",
+      padding: '24px 16px', boxSizing: 'border-box',
+    }}>
+      <div style={{
+        background: '#fff', borderRadius: 20,
+        boxShadow: '0 24px 80px rgba(0,0,0,0.25)',
+        padding: '40px 32px 36px',
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        width: '100%', maxWidth: 360, boxSizing: 'border-box',
+        animation: shaking ? 'shake 0.4s ease' : 'none',
+      }}>
+        {/* Avatar */}
+        <div style={{ marginBottom: 16 }}>
+          {user?.picture
+            ? <img src={user.picture} alt="" style={{ width: 52, height: 52, borderRadius: '50%', border: '3px solid #224E5F' }} />
+            : <div style={{ width: 52, height: 52, borderRadius: '50%', background: '#224E5F', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 700, color: '#fff' }}>
+                {user?.name?.[0]?.toUpperCase() || '?'}
+              </div>
+          }
+        </div>
+
+        <div style={{ fontSize: 16, fontWeight: 700, color: '#1a2744', marginBottom: 4, textAlign: 'center' }}>
+          Hi, {user?.name?.split(' ')[0] || 'there'} 👋
+        </div>
+        <div style={{ fontSize: 12, color: '#999', marginBottom: 28, textAlign: 'center', lineHeight: 1.6 }}>
+          Enter your access code to continue
+        </div>
+
+        <input
+          type="password"
+          inputMode="numeric"
+          maxLength={10}
+          placeholder="_ _ _ _ _"
+          value={input}
+          onChange={e => { setInput(e.target.value); setError('') }}
+          onKeyDown={e => e.key === 'Enter' && verify()}
+          autoFocus
+          style={{
+            width: '100%', boxSizing: 'border-box',
+            padding: '14px 18px',
+            fontSize: 22, fontWeight: 700, letterSpacing: 10,
+            textAlign: 'center',
+            border: error ? '2px solid #e74c3c' : '2px solid #e0e0e0',
+            borderRadius: 10, outline: 'none',
+            fontFamily: "'DM Sans', sans-serif",
+            color: '#1a2744',
+            transition: 'border-color 0.15s',
+          }}
+        />
+
+        {error && (
+          <div style={{ marginTop: 10, fontSize: 11, color: '#e74c3c', textAlign: 'center' }}>{error}</div>
+        )}
+
+        <button
+          onClick={verify}
+          style={{
+            marginTop: 18, width: '100%',
+            padding: '13px 20px',
+            background: 'linear-gradient(135deg, #224E5F, #1a3d4d)',
+            border: 'none', borderRadius: 10,
+            color: '#fff', fontSize: 13, fontWeight: 700,
+            cursor: 'pointer', letterSpacing: 0.5,
+            fontFamily: "'DM Sans', sans-serif",
+            WebkitTapHighlightColor: 'transparent',
+          }}
+        >
+          Enter →
+        </button>
+
+        <div style={{ marginTop: 20, fontSize: 10, color: '#ccc', textAlign: 'center' }}>
+          NNT Business Solutions · Authorised access only
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes shake {
+          0%,100% { transform: translateX(0) }
+          20%      { transform: translateX(-8px) }
+          40%      { transform: translateX(8px) }
+          60%      { transform: translateX(-6px) }
+          80%      { transform: translateX(6px) }
+        }
+      `}</style>
+    </div>
+  )
+}
+
 export default function App() {
   useHistory()
   const isMobile = useIsMobile()
-  const [mobileTab, setMobileTab] = useState('form')
+  const [mobileTab,    setMobileTab]    = useState('form')
+  const [codeVerified, setCodeVerified] = useState(false)   // resets every session
   const user = useAuthStore(s => s.user)
 
   if (!user) return <LoginGate />
+  if (!codeVerified) return <CodeGate onVerified={() => setCodeVerified(true)} />
 
   return (
     <div className="flex flex-col font-sans text-[13px] text-gray-900 bg-bg select-none"
