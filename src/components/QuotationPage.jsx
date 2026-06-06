@@ -13,12 +13,11 @@ function fmtNum(n) {
 const cell = (extra = {}) => ({
   border: '1.5px solid #444',
   padding: '7px 10px',
-  fontSize: 11,
-  color: '#1a2744',
+  fontSize: 11.5,
+  fontWeight: 500,
+  color: '#111',
   ...extra,
 })
-
-const MIN_ROWS = 5
 
 export default function QuotationPage({ zoom = 1, pageRef }) {
   const clientInfo      = useDocumentStore(s => s.clientInfo)
@@ -29,7 +28,6 @@ export default function QuotationPage({ zoom = 1, pageRef }) {
   const notes           = useDocumentStore(s => s.notes)
   const termsConditions = useDocumentStore(s => s.termsConditions)
 
-  const padRows = Math.max(0, MIN_ROWS - lineItems.length)
 
   return (
     <div
@@ -99,11 +97,11 @@ export default function QuotationPage({ zoom = 1, pageRef }) {
           </h1>
 
           {/* Date row */}
-          <div style={{ fontSize: 12, color: '#444', marginBottom: 18, position: 'relative', zIndex: 1 }}>
-            Date: <span style={{ fontWeight: 500 }}>{fmtDate(metadata.date)}</span>
+          <div style={{ fontSize: 12, color: '#333', fontWeight: 500, marginBottom: 18, position: 'relative', zIndex: 1 }}>
+            Date: <span style={{ fontWeight: 700, color: '#111' }}>{fmtDate(metadata.date)}</span>
             {metadata.invoiceNumber && (
               <span style={{ marginLeft: 28 }}>
-                Quote No.: <span style={{ fontWeight: 500 }}>{metadata.invoiceNumber}</span>
+                Quote No.: <span style={{ fontWeight: 700, color: '#111' }}>{metadata.invoiceNumber}</span>
               </span>
             )}
           </div>
@@ -111,30 +109,30 @@ export default function QuotationPage({ zoom = 1, pageRef }) {
           {/* ── FROM / TO ── */}
           <div style={{ display: 'flex', gap: 16, marginBottom: 22, position: 'relative', zIndex: 1 }}>
             {/* FROM — NNT fixed */}
-            <div style={{ flex: 1, border: '1px solid #bbb', borderRadius: 4, padding: '12px 14px' }}>
-              <div style={{ fontWeight: 700, fontSize: 12, marginBottom: 9, color: '#1a2744' }}>From</div>
-              <div style={{ fontSize: 11, color: '#555', lineHeight: 1.85 }}>
-                <div>Name: <span style={{ color: '#1a2744', fontWeight: 500 }}>NNT</span></div>
-                <div>Number: <span style={{ color: '#1a2744' }}>+880 1760-760730</span></div>
+            <div style={{ flex: 1, border: '1.5px solid #999', borderRadius: 4, padding: '12px 14px' }}>
+              <div style={{ fontWeight: 800, fontSize: 12, marginBottom: 9, color: '#111' }}>From</div>
+              <div style={{ fontSize: 11, color: '#333', lineHeight: 1.85, fontWeight: 500 }}>
+                <div>Name: <span style={{ color: '#111', fontWeight: 700 }}>NNT</span></div>
+                <div>Number: <span style={{ color: '#111', fontWeight: 600 }}>+880 1760-760730</span></div>
                 <div style={{ display: 'flex', gap: 4 }}>
                   <span style={{ flexShrink: 0 }}>Address:</span>
-                  <span style={{ color: '#1a2744' }}>262/263 Bangshal Road,<br />Nawabpur, Dhaka-1100</span>
+                  <span style={{ color: '#111', fontWeight: 600 }}>262/263 Bangshal Road,<br />Nawabpur, Dhaka-1100</span>
                 </div>
               </div>
             </div>
 
             {/* TO — client */}
-            <div style={{ flex: 1, border: '1px solid #bbb', borderRadius: 4, padding: '12px 14px' }}>
-              <div style={{ fontWeight: 700, fontSize: 12, marginBottom: 9, color: '#1a2744' }}>TO</div>
-              <div style={{ fontSize: 11, color: '#555', lineHeight: 1.85 }}>
-                <div>Name: <span style={{ color: '#1a2744', fontWeight: clientInfo.name ? 500 : 400 }}>{clientInfo.name}</span></div>
-                <div>Number: <span style={{ color: '#1a2744' }}>{clientInfo.contact}</span></div>
+            <div style={{ flex: 1, border: '1.5px solid #999', borderRadius: 4, padding: '12px 14px' }}>
+              <div style={{ fontWeight: 800, fontSize: 12, marginBottom: 9, color: '#111' }}>TO</div>
+              <div style={{ fontSize: 11, color: '#333', lineHeight: 1.85, fontWeight: 500 }}>
+                <div>Name: <span style={{ color: '#111', fontWeight: 700 }}>{clientInfo.name}</span></div>
+                <div>Number: <span style={{ color: '#111', fontWeight: 600 }}>{clientInfo.contact}</span></div>
                 {clientInfo.email && (
-                  <div>Email: <span style={{ color: '#1a2744' }}>{clientInfo.email}</span></div>
+                  <div>Email: <span style={{ color: '#111', fontWeight: 600 }}>{clientInfo.email}</span></div>
                 )}
                 <div style={{ display: 'flex', gap: 4 }}>
                   <span style={{ flexShrink: 0 }}>Address:</span>
-                  <span style={{ color: '#1a2744', whiteSpace: 'pre-line' }}>{clientInfo.address}</span>
+                  <span style={{ color: '#111', fontWeight: 600, whiteSpace: 'pre-line' }}>{clientInfo.address}</span>
                 </div>
               </div>
             </div>
@@ -144,34 +142,23 @@ export default function QuotationPage({ zoom = 1, pageRef }) {
           <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 20, position: 'relative', zIndex: 1 }}>
             <thead>
               <tr>
-                <th style={{ ...cell({ background: '#f5f5f5', fontWeight: 700, textAlign: 'center', width: 52 }) }}>SL NO.</th>
-                <th style={{ ...cell({ background: '#f5f5f5', fontWeight: 700, textAlign: 'left' }) }}>Description</th>
-                <th style={{ ...cell({ background: '#f5f5f5', fontWeight: 700, textAlign: 'right', width: 72 }) }}>quantity</th>
-                <th style={{ ...cell({ background: '#f5f5f5', fontWeight: 700, textAlign: 'right', width: 88 }) }}>Unit price</th>
-                <th style={{ ...cell({ background: '#f5f5f5', fontWeight: 700, textAlign: 'right', width: 90 }) }}>Total</th>
+                <th style={{ ...cell({ background: '#e8e8e8', fontWeight: 800, textAlign: 'center', width: 52, fontSize: 12, color: '#111' }) }}>SL NO.</th>
+                <th style={{ ...cell({ background: '#e8e8e8', fontWeight: 800, textAlign: 'left', fontSize: 12, color: '#111' }) }}>Description</th>
+                <th style={{ ...cell({ background: '#e8e8e8', fontWeight: 800, textAlign: 'right', width: 72, fontSize: 12, color: '#111' }) }}>Quantity</th>
+                <th style={{ ...cell({ background: '#e8e8e8', fontWeight: 800, textAlign: 'right', width: 88, fontSize: 12, color: '#111' }) }}>Unit Price</th>
+                <th style={{ ...cell({ background: '#e8e8e8', fontWeight: 800, textAlign: 'right', width: 90, fontSize: 12, color: '#111' }) }}>Total</th>
               </tr>
             </thead>
             <tbody>
               {lineItems.map((item, idx) => (
                 <tr key={item.id}>
-                  <td style={{ ...cell({ textAlign: 'center', color: '#666' }) }}>{idx + 1}</td>
-                  <td style={{ ...cell({ color: item.description ? '#1a2744' : '#ccc', fontStyle: item.description ? 'normal' : 'italic' }) }}>
+                  <td style={{ ...cell({ textAlign: 'center', fontWeight: 700, color: '#111' }) }}>{idx + 1}</td>
+                  <td style={{ ...cell({ color: item.description ? '#111' : '#bbb', fontStyle: item.description ? 'normal' : 'italic', fontWeight: item.description ? 600 : 400 }) }}>
                     {item.description || 'Item description'}
                   </td>
-                  <td style={{ ...cell({ textAlign: 'right', color: '#444' }) }}>{item.quantity}</td>
-                  <td style={{ ...cell({ textAlign: 'right', color: '#444' }) }}>{CURRENCY} {fmtNum(item.rate)}</td>
-                  <td style={{ ...cell({ textAlign: 'right', fontWeight: 600 }) }}>{CURRENCY} {fmtNum(item.amount)}</td>
-                </tr>
-              ))}
-
-              {/* Padding rows */}
-              {Array.from({ length: padRows }).map((_, i) => (
-                <tr key={'p' + i}>
-                  <td style={cell({ height: 30 })}></td>
-                  <td style={cell()}></td>
-                  <td style={cell()}></td>
-                  <td style={cell()}></td>
-                  <td style={cell()}></td>
+                  <td style={{ ...cell({ textAlign: 'right', fontWeight: 600, color: '#111' }) }}>{item.quantity}</td>
+                  <td style={{ ...cell({ textAlign: 'right', fontWeight: 600, color: '#111' }) }}>{CURRENCY} {fmtNum(item.rate)}</td>
+                  <td style={{ ...cell({ textAlign: 'right', fontWeight: 700, color: '#111' }) }}>{CURRENCY} {fmtNum(item.amount)}</td>
                 </tr>
               ))}
 
@@ -189,10 +176,10 @@ export default function QuotationPage({ zoom = 1, pageRef }) {
 
               {/* Total amount row */}
               <tr>
-                <td colSpan={4} style={{ ...cell({ textAlign: 'right', fontWeight: 600, fontSize: 12, background: '#fafafa' }) }}>
-                  Total amount
+                <td colSpan={4} style={{ ...cell({ textAlign: 'right', fontWeight: 700, fontSize: 12, background: '#f0f0f0', color: '#111' }) }}>
+                  Total Amount
                 </td>
-                <td style={{ ...cell({ textAlign: 'right', fontWeight: 700, fontSize: 12, background: '#fafafa' }) }}>
+                <td style={{ ...cell({ textAlign: 'right', fontWeight: 800, fontSize: 12, background: '#f0f0f0', color: '#111' }) }}>
                   {CURRENCY} {fmtNum(totals.grandTotal)}
                 </td>
               </tr>
