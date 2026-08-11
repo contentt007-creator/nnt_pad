@@ -116,7 +116,7 @@ export default function QuotationPage({ zoom = 1, pageRef }) {
                 <div>Number: <span style={{ color: '#111', fontWeight: 600 }}>+880 1760-760730</span></div>
                 <div style={{ display: 'flex', gap: 4 }}>
                   <span style={{ flexShrink: 0 }}>Address:</span>
-                  <span style={{ color: '#111', fontWeight: 600 }}>262/263 Bangshal Road,<br />Nawabpur, Dhaka-1100</span>
+                  <span style={{ color: '#111', fontWeight: 600 }}>262/263 Bangshal Road,<br />Dhaka</span>
                 </div>
               </div>
             </div>
@@ -215,7 +215,7 @@ export default function QuotationPage({ zoom = 1, pageRef }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: '0 0 auto' }}>
             <img src="/pad_img2.png" alt="" style={{ width: 13, height: 16, objectFit: 'contain', opacity: 0.9 }} />
             <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>
-              United Tower, 263 Bangshal<br />Road, Dhaka, Bangladesh.
+              262/263 Bangshal Road,<br />Dhaka
             </span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: '0 0 auto' }}>

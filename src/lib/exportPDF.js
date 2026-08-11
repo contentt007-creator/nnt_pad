@@ -82,7 +82,7 @@ img{max-width:100%;object-fit:contain}
     const bgSt = bg ? `background-image:url(${bg});background-size:cover;background-position:top center;` : ''
     let hdr = ''
     if (!blank) {
-      hdr = `<div class="lht"><div style="display:flex;align-items:center;gap:13px"><div class="llogo">NNT</div><div><div class="lname">NNT Business Solutions</div><div class="ltag">Excellence in Every Transaction</div></div></div><div class="lcon">123 Business Avenue, Dhaka, Bangladesh<br>Tel: +880 1234-567890<br>info@nnt.com.bd</div></div><div class="lbar"></div><div class="lban"><div class="ldt">${docTitles[doc] || 'Document'}</div><div class="ldm">Date: ${ds}<br>Ref: ${ref}</div></div>`
+      hdr = `<div class="lht"><div style="display:flex;align-items:center;gap:13px"><div class="llogo">NNT</div><div><div class="lname">NNT Business Solutions</div><div class="ltag">Excellence in Every Transaction</div></div></div><div class="lcon">262/263 Bangshal Road, Dhaka<br>Tel: +880 1234-567890<br>info@nnt.com.bd</div></div><div class="lbar"></div><div class="lban"><div class="ldt">${docTitles[doc] || 'Document'}</div><div class="ldm">Date: ${ds}<br>Ref: ${ref}</div></div>`
     }
     html += `<div class="page">${hdr}<div class="pbody" style="${bgSt}">`
     pg.els.forEach(el => {

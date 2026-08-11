@@ -285,7 +285,7 @@ export default function Page({ zoom = 1, pageRef }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: '0 0 auto' }}>
             <img src="/pad_img2.png" alt="" style={{ width: 13, height: 16, objectFit: 'contain', opacity: 0.9 }} />
             <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>
-              United Tower, 263 Bangshal<br />Road, Dhaka, Bangladesh.
+              262/263 Bangshal Road,<br />Dhaka
             </span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: '0 0 auto' }}>
